@@ -12,9 +12,9 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateRouletteRest {
-	@JsonProperty("idRuleta")
+public class ListRouletteRest {
+	@JsonProperty("Id_Asignado")
 	private long idRoulette;
-	@JsonProperty("estado")
+	@JsonProperty("Estado_Ruleta")
 	private StateDTO idState;
 }

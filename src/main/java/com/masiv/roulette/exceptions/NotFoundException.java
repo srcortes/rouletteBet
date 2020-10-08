@@ -3,28 +3,23 @@ package com.masiv.roulette.exceptions;
 import java.util.Arrays;
 
 import org.springframework.http.HttpStatus;
+
+import lombok.Data;
 /**
  * This class is responsible handle exception when value is not found in the database
  * @author srcortes
  *
  */
-public class NotFoundException extends ManagerApiException {	
+@Data
+public class NotFoundException extends Exception {	
+	private HttpStatus status;
 	private static final long serialVersionUID = 1L;
-	/**
-	 * Overloaded Constructor
-	 * @param code
-	 * @param message
-	 */
-	public NotFoundException(String code, String message) {
-		super(code,HttpStatus.NOT_FOUND.value(),message);
+	public NotFoundException(HttpStatus status, String message, Throwable cause) {
+		super(message, cause);
+		this.status = status;
 	}
-	/**
-	 * Overloaded Constructor
-	 * @param code
-	 * @param message
-	 * @param data
-	 */
-	public NotFoundException(String code, String message, ApiError data) {
-		super(code,HttpStatus.NOT_FOUND.value(),message, Arrays.asList(data));
+	public NotFoundException(HttpStatus status, String message) {
+		super(message);
+		this.status = status;
 	}
 }

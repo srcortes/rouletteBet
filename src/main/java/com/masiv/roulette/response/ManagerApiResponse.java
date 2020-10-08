@@ -17,25 +17,12 @@ public class ManagerApiResponse<T> implements Serializable {
 	private String status;
 	private String code;
 	private String message;
-	private T dataInformation;
-	/**
-	 * Overloaded Constructors
-	 * @param status
-	 * @param code
-	 * @param message
-	 */
+	private T dataInformation;	
 	public ManagerApiResponse(String status, String code, String message) {
 		this.status = status;
 		this.code = code;
 		this.message = message;
-	}
-	/**
-	 * Overloaded Constructors
-	 * @param status
-	 * @param code
-	 * @param message
-	 * @param dataInformation
-	 */
+	}	
 	public ManagerApiResponse(String status, String code, String message, T dataInformation) {
 		this.status = status;
 		this.code = code;

@@ -2,23 +2,24 @@ package com.masiv.roulette.exceptions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
+
+import lombok.Data;
 /**
  * This class handle exception
  * @author srcortes
  */
+@Data
 public class ManagerApiException extends Exception {
-	private static final long serialVersionUID = 1L;	
-	private final String code;	
-	private final int responseCode;	
-	private final List<ApiError> errorList = new ArrayList<>();	
-	public ManagerApiException(String code, int responseCode, String message) {
-		super(message);
-		this.code = code;
-		this.responseCode = responseCode;
+	private HttpStatus status;	
+	private static final long serialVersionUID = 1L;
+	public ManagerApiException(HttpStatus status, String message, Throwable cause) {
+		super(message, cause);
+		this.status = status;
 	}
-	public ManagerApiException(String code, int responseCode, String message, List<ApiError> errorList) {
+	public ManagerApiException(HttpStatus status, String message) {
 		super(message);
-		this.code = code;
-		this.responseCode = responseCode;		
-	}
+		this.status = status;
+	}	
 }

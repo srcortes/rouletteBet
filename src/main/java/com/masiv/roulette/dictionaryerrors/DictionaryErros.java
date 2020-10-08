@@ -7,4 +7,7 @@ public interface DictionaryErros {
 	interface ErrorInternalServer{
 		String messageInternalError = "INTERNAL SERVER ERROR CHECK LOG PLEASE.";
 	}
+	interface ErrorNotFound{
+		String messageNotFoundRoulette = "ROULETTE_NOT_FOUND";
+	}
 }

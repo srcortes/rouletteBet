@@ -8,14 +8,15 @@ import org.springframework.http.HttpStatus;
  * @author srcortes
  *
  */
-public class InternalServerErrorException extends ManagerApiException{
+public class InternalServerErrorException extends Exception{
+	private HttpStatus status;
 	private static final long serialVersionUID = 1L;
-	public InternalServerErrorException(String code, String message) {
-		super(code,HttpStatus.INTERNAL_SERVER_ERROR.value(),message);
-	}	
-	public InternalServerErrorException(String code, String message, ApiError data) {
-		super(code,HttpStatus.INTERNAL_SERVER_ERROR.value(),message, Arrays.asList(data));
+	public InternalServerErrorException(HttpStatus status, String message, Throwable cause) {
+		super(message, cause);
+		this.status = status;
 	}
-
-
+	public InternalServerErrorException(HttpStatus status, String message) {
+		super(message);
+		this.status = status;
+	}
 }
