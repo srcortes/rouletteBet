@@ -4,7 +4,6 @@ package com.masiv.roulette.repositories;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -13,12 +12,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-
 import com.masiv.roulette.constant.ConstantState;
 import com.masiv.roulette.dao.RouletteDAO;
 import com.masiv.roulette.dto.RouletteDTO;
 import com.masiv.roulette.dto.StateDTO;
-import com.masiv.roulette.exceptions.InternalServerErrorException;
 import com.masiv.roulette.exceptions.ManagerApiException;
 /**
 * this interface represent the comunication with database
@@ -32,7 +29,7 @@ public class RouletteRepository implements RouletteDAO {
 		this.template = template;
 	}
 	@Override
-	public RouletteDTO createRoulette(RouletteDTO roulette) throws InternalServerErrorException {
+	public RouletteDTO createRoulette(RouletteDTO roulette) throws ManagerApiException {
 		KeyHolder holder = new GeneratedKeyHolder();		
 		RouletteDTO rouletteDTO = roulette;		
 		SqlParameterSource param = new MapSqlParameterSource()
@@ -42,7 +39,7 @@ public class RouletteRepository implements RouletteDAO {
 		return rouletteDTO;
 	}
 	@Override
-	public void createStateRoulette(StateDTO state) throws InternalServerErrorException {
+	public void createStateRoulette(StateDTO state) throws ManagerApiException {
 		KeyHolder holder = new GeneratedKeyHolder();
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("ID_STATE", state.getIdState())
@@ -50,7 +47,7 @@ public class RouletteRepository implements RouletteDAO {
 		template.update("INSERT INTO  MANAGER.STATE (ID_STATE, DESCRIPTION) VALUES (:ID_STATE, :DESCRIPTION)", param, holder);		
 	}
 	@Override
-	public void openingRoulette(Long idRoulette) throws InternalServerErrorException {
+	public void openingRoulette(Long idRoulette) throws ManagerApiException {
 		final String sqlOpeningRoulette = "UPDATE MANAGER.ROULETTE SET id_state = "+ConstantState.OPENING.getId()+" WHERE id_roulette=:idRoulette";
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("idRoulette", idRoulette);
@@ -63,7 +60,7 @@ public class RouletteRepository implements RouletteDAO {
 		});		
 	}
 	@Override
-	public List<RouletteDTO> listRoulette() throws InternalServerErrorException {
+	public List<RouletteDTO> listRoulette() throws ManagerApiException {
 		final String sqlListRoulettes = "SELECT ID_ROULETTE, S.ID_STATE, S.DESCRIPTION FROM MANAGER.ROULETTE R "
 				+ "JOIN MANAGER.STATE S ON (R.ID_STATE = S.ID_STATE)";
 		return template.query(sqlListRoulettes, (rs, rowNumber) -> {

@@ -3,24 +3,18 @@ package com.masiv.roulette.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-
 import com.masiv.roulette.dto.StateDTO;
-import com.masiv.roulette.exceptions.InternalServerErrorException;
 import com.masiv.roulette.exceptions.ManagerApiException;
-import com.masiv.roulette.exceptions.NotFoundException;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
 import com.masiv.roulette.response.ManagerApiResponse;
@@ -57,47 +51,41 @@ public class RouletteControllerTest {
 		LIST_ROULETTE_REST.add(ROULETTE_REST);
 	}	
 	@Test
-	public void createRouletteTest() throws InternalServerErrorException {
+	public void createRouletteTest() throws ManagerApiException {
 		Mockito.when(rouletteService.createRoulette()).thenReturn(CREATE_ROULETTE_REST);
 		ManagerApiResponse<CreateRouletteRest> response = rouletteController.createRoulette();
 		assertEquals(response.getCode(), SUCCES_CODE);
 		assertEquals(response.getMessage(), SUCCES_MESSAGE);
 		assertEquals(response.getStatus(), SUCCES_STATUS);
-		assertEquals(response.getDataInformation(), CREATE_ROULETTE_REST);	
+		assertEquals(response.getDataInformation(), CREATE_ROULETTE_REST);
 	}
-	@Test(expected = InternalServerErrorException.class)
-	public void createRouletteErrorTest() throws InternalServerErrorException {
-		Mockito.doThrow(InternalServerErrorException.class).when(rouletteService).createRoulette();
+	@Test(expected = ManagerApiException.class)
+	public void createRouletteErrorTest() throws ManagerApiException {
+		Mockito.doThrow(ManagerApiException.class).when(rouletteService).createRoulette();
 		ManagerApiResponse<CreateRouletteRest> response = rouletteController.createRoulette();
 		fail();
-	}
-	@Test(expected = InternalServerErrorException.class)
-	public void openingRouletteErrorTest() throws NotFoundException, InternalServerErrorException {
-		Mockito.doThrow(InternalServerErrorException.class).when(rouletteService).openingRoulette(ID_ROULETTE);
-		rouletteController.openingRoulette(ID_ROULETTE);
-		fail();
-	}
-	@Test(expected = NotFoundException.class)
-	public void openingRouletteErrorNotFoundTest() throws NotFoundException, InternalServerErrorException {
-		Mockito.doThrow(NotFoundException.class).when(rouletteService).openingRoulette(ID_ROULETTE);
+	}	
+	@Test(expected = ManagerApiException.class)
+	public void openingRouletteErrorErrorTest() throws ManagerApiException {
+		Mockito.doThrow(ManagerApiException.class).when(rouletteService).openingRoulette(ID_ROULETTE);
 		rouletteController.openingRoulette(ID_ROULETTE);
 		fail();
 	}
 	@Test
-	public void openingRouletteTest() throws NotFoundException, InternalServerErrorException {
+	public void openingRouletteTest() throws ManagerApiException {
 		Mockito.when(rouletteService.openingRoulette(ID_ROULETTE)).thenReturn(SUCCES);
 		ManagerApiResponse<String> response = rouletteController.openingRoulette(ID_ROULETTE);
 		assertEquals(SUCCES, response.getDataInformation());
 		assertNotNull(response.getDataInformation());
 	}
-	@Test(expected = InternalServerErrorException.class)
-	public void getRouletteListErrorTest() throws InternalServerErrorException {
-		Mockito.doThrow(InternalServerErrorException.class).when(rouletteService).listRoulette();
+	@Test(expected = ManagerApiException.class)
+	public void getRouletteListErrorTest() throws ManagerApiException {
+		Mockito.doThrow(ManagerApiException.class).when(rouletteService).listRoulette();
 		rouletteController.getRouletteList();		
 		fail();
 	}
 	@Test
-	public void getRouletteList() throws InternalServerErrorException {
+	public void getRouletteList() throws ManagerApiException {
 		Mockito.when(rouletteService.listRoulette()).thenReturn(LIST_ROULETTE_REST);
 		ManagerApiResponse<List<ListRouletteRest>> response = rouletteController.getRouletteList();
 		assertEquals(response.getCode(), SUCCES_CODE);

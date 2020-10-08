@@ -23,20 +23,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler({ ConstraintViolationException.class })
 	public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex, WebRequest request) {
-		List<String> erreurs = new ArrayList<String>();
+		List<String> error = new ArrayList<String>();
 		for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-			erreurs.add(violation.getPropertyPath() + ": " + violation.getMessage());
+			error.add(violation.getPropertyPath() + ": " + violation.getMessage());
 		}
-		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "There are data with errors", erreurs);
+		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "There are data with errors", error);
+		
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		List<String> erreurs = new ArrayList<>();
+		List<String> error = new ArrayList<>();
 		ex.getBindingResult().getFieldErrors().stream()
-				.forEach(f -> erreurs.add(f.getField() + ":" + f.getDefaultMessage()));
-		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "There are data with errors", erreurs);
+				.forEach(f -> error.add(f.getField() + ":" + f.getDefaultMessage()));
+		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "There are data with errors", error);
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 	@ExceptionHandler(ManagerApiException.class)

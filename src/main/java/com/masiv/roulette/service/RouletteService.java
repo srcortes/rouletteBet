@@ -1,10 +1,7 @@
 package com.masiv.roulette.service;
 
 import java.util.List;
-
-import com.masiv.roulette.exceptions.InternalServerErrorException;
 import com.masiv.roulette.exceptions.ManagerApiException;
-import com.masiv.roulette.exceptions.NotFoundException;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
 /**
@@ -13,8 +10,8 @@ import com.masiv.roulette.json.ListRouletteRest;
  * @author srcortes
  */
 public interface RouletteService {
-	CreateRouletteRest createRoulette() throws InternalServerErrorException;
-	void createStateRoulette() throws InternalServerErrorException;
-	String openingRoulette(Long idRoulette)throws NotFoundException, InternalServerErrorException;
-	List<ListRouletteRest> listRoulette() throws InternalServerErrorException;
+	CreateRouletteRest createRoulette() throws ManagerApiException;
+	void createStateRoulette() throws ManagerApiException;
+	String openingRoulette(Long idRoulette)throws ManagerApiException;
+	List<ListRouletteRest> listRoulette() throws ManagerApiException;
 }
