@@ -14,9 +14,11 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import com.masiv.roulette.constant.ConstantState;
 import com.masiv.roulette.dao.RouletteDAO;
+import com.masiv.roulette.dto.CreateBetDTO;
 import com.masiv.roulette.dto.RouletteDTO;
 import com.masiv.roulette.dto.StateDTO;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.json.BetUserRest;
 /**
 * this interface represent the comunication with database
 * @author srcortes
@@ -70,5 +72,18 @@ public class RouletteRepository implements RouletteDAO {
 			rouletteDTO.setIdState(stateDTO);
 			return rouletteDTO;
 		});
+	}
+	@Override
+	public CreateBetDTO generateBet(CreateBetDTO createBetDTO) throws ManagerApiException {
+		KeyHolder holder = new GeneratedKeyHolder();
+		CreateBetDTO createBet = createBetDTO;
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("ID_BET", createBet.getIdBet())
+				.addValue("ID_ROULETTE", 1)
+				.addValue("ID_GAMBLER", createBet.getIdUser())
+				.addValue("BET", createBet.getBet())
+				.addValue("AMOUNT", createBet.getAmount());
+		template.update("INSERT INTO MANAGER.BET_USER (ID_BET, ID_ROULETTE, ID_GAMBLER, BET, AMOUNT) VALUES (:ID_BET, :ID_ROULETTE, :ID_GAMBLER, :BET, :AMOUNT)", param, holder);
+		return createBet;
 	}
 }

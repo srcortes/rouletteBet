@@ -2,6 +2,8 @@ package com.masiv.roulette.service;
 
 import java.util.List;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.json.BetUserRest;
+import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
 /**
@@ -10,8 +12,9 @@ import com.masiv.roulette.json.ListRouletteRest;
  * @author srcortes
  */
 public interface RouletteService {
-	CreateRouletteRest createRoulette() throws ManagerApiException;
-	void createStateRoulette() throws ManagerApiException;
+	CreateRouletteRest createRoulette() throws ManagerApiException;	
 	String openingRoulette(Long idRoulette)throws ManagerApiException;
 	List<ListRouletteRest> listRoulette() throws ManagerApiException;
+	BetUserRest listBetUser(CreateBetRest createBetRest, Long idUsuario) throws ManagerApiException;
+	void createStateRoulette() throws ManagerApiException;	
 }

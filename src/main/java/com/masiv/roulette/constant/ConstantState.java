@@ -6,7 +6,7 @@ import lombok.Data;
  * @author srcortes
  */
 public enum ConstantState {
-	CREATED("1","Created"), OPENING("2","Opening"), CLOSED("3","Closed");	
+	CREATED("1","Created"), OPENING("2","Opening"), CLOSED("3","Closed"), IN_USE("4","Assignement");	
 	private String id;
 	private String name;	
 	private ConstantState(String id, String name) {
