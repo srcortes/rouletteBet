@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateRouletteRest {
+public final class CreateRouletteRest {
 	@JsonProperty("idRuleta")
 	private long idRoulette;
 	@JsonProperty("estado")

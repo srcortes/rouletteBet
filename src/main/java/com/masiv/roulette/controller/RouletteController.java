@@ -24,6 +24,7 @@ import com.masiv.roulette.exceptions.ColorNotAllowedException;
 import com.masiv.roulette.exceptions.ManagerApiException;
 import com.masiv.roulette.exceptions.NumberOutRangeException;
 import com.masiv.roulette.json.BetUserRest;
+import com.masiv.roulette.json.ClosedBetRest;
 import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
@@ -74,6 +75,7 @@ public class RouletteController {
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
 				rouletteService.listRoulette());		
 	}
+	@ApiOperation(notes = "Service is responsable of generate Bet by user", value = "N/A")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = String.class),
 		@ApiResponse(code = 500, message = "Internal Server Error", response = Exception.class),
 		@ApiResponse(code = 417, message = "Number out range", response =  NumberOutRangeException.class),
@@ -87,5 +89,17 @@ public class RouletteController {
 
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
 				rouletteService.listBetUser(createBetRest, idUser));
+	}
+	@ApiOperation(notes = "Service is responsable oof close bet for id roulette", value = "Id roulette in state opening")
+	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = String.class),
+			@ApiResponse(code = 500, message = "Internal Server Error", response = Exception.class),
+			@ApiResponse(code = 417, message = "Number out range", response = NumberOutRangeException.class),
+			@ApiResponse(code = 409, message = "Color not allowed", response = ColorNotAllowedException.class),
+			@ApiResponse(code = 417, message = "Exceded limit bet", response = Exception.class) })
+	@PutMapping(value = "/closedBet/{idRoulette}")
+	public ManagerApiResponse<ClosedBetRest> closedBet(@PathVariable("idRoulette") Long idRoulette) throws Exception {
+		
+		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
+				rouletteService.closedBet(idRoulette));
 	}
 }

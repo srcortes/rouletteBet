@@ -20,6 +20,7 @@ public class IntegrationUtil {
 		return Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
 	}
 	public <T> boolean existObject(List<T> list, Predicate<T> predicate) {
+		System.out.print(list);
 		list.forEach(i -> {
 			if (predicate.test(i))
 				existObject = true;

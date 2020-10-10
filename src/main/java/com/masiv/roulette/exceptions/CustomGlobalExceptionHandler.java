@@ -76,5 +76,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 		ApiError apiError = new ApiError(finEx.getStatus(), "Amount exceded the minimud permitted", ex.getMessage());
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
+	@ExceptionHandler(NotExistBetException.class)
+	public ResponseEntity<Object> customHandleNotExistBetException(final Exception ex, WebRequest request) {
+		NotExistBetException finEx = (NotExistBetException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "Not exists some bet for the roulette", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
 	
 }

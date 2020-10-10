@@ -6,6 +6,7 @@ import com.masiv.roulette.dto.CreateBetDTO;
 import com.masiv.roulette.dto.RouletteDTO;
 import com.masiv.roulette.exceptions.ManagerApiException;
 import com.masiv.roulette.json.BetUserRest;
+import com.masiv.roulette.json.ClosedBetRest;
 import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
@@ -19,6 +20,7 @@ public interface RouletteService {
 	String openingRoulette(Long idRoulette)throws Exception;
 	List<ListRouletteRest> listRoulette() throws ManagerApiException;
 	BetUserRest listBetUser(CreateBetRest createBetRest, Long idUsuario) throws Exception;
+	ClosedBetRest closedBet(Long idRoulette)throws Exception;
 	void createStateBet() throws ManagerApiException;
 	void createStateRoulette() throws ManagerApiException;	
 	default RouletteDTO selectionRouletteOpening()throws ManagerApiException{

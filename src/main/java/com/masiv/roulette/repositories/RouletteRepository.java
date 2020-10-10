@@ -81,11 +81,11 @@ public class RouletteRepository implements RouletteDAO {
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("ID_BET", createBet.getIdBet())
 				.addValue("ID_ROULETTE", createBetDTO.getRoulette().getIdRoulette())
-				.addValue("ID_GAMBLER", createBet.getIdUser())
+				.addValue("ID_GAMBLES", createBet.getIdUser())
 				.addValue("ID_STATEBET", ConstantStateBet.OPEN.getId())
 				.addValue("BET", createBet.getBet())
 				.addValue("AMOUNT", createBet.getAmount());
-		template.update("INSERT INTO MANAGER.BET_USER (ID_BET, ID_ROULETTE, ID_GAMBLER, ID_STATEBET, BET, AMOUNT) VALUES (:ID_BET, :ID_ROULETTE, :ID_GAMBLER, :ID_STATEBET, :BET, :AMOUNT)", param, holder);
+		template.update("INSERT INTO MANAGER.BET_USER (ID_BET, ID_ROULETTE, ID_GAMBLES, ID_STATEBET, BET, AMOUNT) VALUES (:ID_BET, :ID_ROULETTE, :ID_GAMBLES, :ID_STATEBET, :BET, :AMOUNT)", param, holder);
 		return createBet;
 	}
 	@Override
@@ -96,5 +96,14 @@ public class RouletteRepository implements RouletteDAO {
 				.addValue("DESCRIPTION", stateBetDTO.getDescription());
 		template.update("INSERT INTO MANAGER.STATE_BET (ID_STATEBET, DESCRIPTION) VALUES (:ID_STATEBET, :DESCRIPTION)", param, holder);
 		
+	}
+	@Override
+	public List<CreateBetDTO> existsBetByRoulette(Long idRoulette) throws ManagerApiException {
+		final String sqlExistsBets = "SELECT ID_BET FROM MANAGER.BET_USER WHERE ID_ROULETTE = " + idRoulette +"";
+		return template.query(sqlExistsBets, (rs, rowNumber) -> {
+			CreateBetDTO createBetDTO = new CreateBetDTO();
+			createBetDTO.setIdBet(rs.getLong("ID_BET"));
+			return createBetDTO;
+		});	
 	}	
 }

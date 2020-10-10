@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CreateBetRest {
+public final class CreateBetRest {
 	@JsonProperty("APUESTA COLOR O NUMERO")
 	private String bet;
 	@JsonProperty("CANTIDAD APOSTAR")

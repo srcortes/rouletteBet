@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BetUserRest {
+public final class BetUserRest {
 	@JsonProperty("Id_Asignado_Apuesta")
 	private long idBet;
 	@JsonProperty("Ruleta_Asignada")

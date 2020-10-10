@@ -17,6 +17,7 @@ import com.masiv.roulette.dto.StateDTO;
 import com.masiv.roulette.exceptions.AmountNotPermittedException;
 import com.masiv.roulette.exceptions.ColorNotAllowedException;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.exceptions.NotExistBetException;
 import com.masiv.roulette.exceptions.NotFoundException;
 import com.masiv.roulette.exceptions.NotOpenRouletteException;
 import com.masiv.roulette.exceptions.NumberOutRangeException;
@@ -28,6 +29,7 @@ import com.masiv.roulette.funcionalinterface.VerifyIsNumber;
 import com.masiv.roulette.funcionalinterface.VerifyNumberRange;
 import com.masiv.roulette.funcionalinterface.VerifyObjectExists;
 import com.masiv.roulette.json.BetUserRest;
+import com.masiv.roulette.json.ClosedBetRest;
 import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
@@ -174,6 +176,39 @@ public final class RouletteServiceImplement implements RouletteService{
 			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
 					DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());
 		}
+	}
+	@Override
+	public ClosedBetRest closedBet(Long idRoulette) throws Exception {
+		try {
+			VerifyObjectExists isFound = new IntegrationUtil()::existObject;
+			VerifyObjectExists isOpeningRoulette = new IntegrationUtil()::existObject;
+			boolean existsRoulette = isFound.existsRow(rouletteRepository.listRoulette(),
+					i -> i.getIdRoulette() == idRoulette);
+			if (!existsRoulette) 			
+				throw new NotFoundException(HttpStatus.NOT_FOUND, null);			
+			boolean existsRouletteOpening = isOpeningRoulette.existsRow(rouletteRepository.listRoulette(),
+					i -> i.getIdRoulette() == idRoulette && i.getIdState().getIdState() == Integer.valueOf(ConstantState.OPENING.getId()));
+			if(!existsRouletteOpening)
+				throw new NotOpenRouletteException(HttpStatus.EXPECTATION_FAILED, null);
+			if(rouletteRepository.existsBetByRoulette(idRoulette).size() == 0)
+				throw new NotExistBetException(HttpStatus.EXPECTATION_FAILED, null);
+		
+			
+			return null;
+		} catch (NotFoundException ex) {
+			log.error(DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());
+			throw new NotFoundException(HttpStatus.NOT_FOUND, DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());
+		} catch(NotOpenRouletteException ex) {
+			throw new NotOpenRouletteException(HttpStatus.EXPECTATION_FAILED,
+					DictionaryErros.NOT_ROULETTE_OPENING.getDescriptionError());
+		}catch (NotExistBetException e) {
+			throw new NotExistBetException(HttpStatus.INTERNAL_SERVER_ERROR,
+					DictionaryErros.NOT_EXISTS_BET_FOR_ROULETTE.getDescriptionError());
+		}catch (ManagerApiException e) {
+			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+					DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());
+		}
+		
 	}
 	public BetUserRest createBet(CreateBetRest createBetRest,Long idUser)throws ManagerApiException{
 		try {
