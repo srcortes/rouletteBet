@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BetUserRest {
-	@JsonProperty("Id_Asignado")
-	private Long idBet;
+	@JsonProperty("Id_Asignado_Apuesta")
+	private long idBet;
 	@JsonProperty("Ruleta_Asignada")
 	private RouletteDTO roulette;
 	@JsonProperty("Identificacion_Usuario")

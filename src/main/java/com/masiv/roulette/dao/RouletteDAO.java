@@ -17,5 +17,5 @@ public interface RouletteDAO {
 	void createStateRoulette(StateDTO state) throws ManagerApiException;
 	void openingRoulette(Long idRoulette)throws ManagerApiException;
 	List<RouletteDTO> listRoulette() throws ManagerApiException;
-	CreateBetDTO generateBet(CreateBetDTO createBetDTO) throws ManagerApiException;
+	CreateBetDTO generateBet(CreateBetDTO createBetDTO) throws ManagerApiException;	
 }

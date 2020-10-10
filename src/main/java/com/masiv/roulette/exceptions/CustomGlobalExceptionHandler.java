@@ -41,9 +41,40 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 	@ExceptionHandler(ManagerApiException.class)
-	public ResponseEntity<Object> customHandleNotFound(final Exception ex, WebRequest request) {
+	public ResponseEntity<Object> customHandleErrorGeneric(final Exception ex, WebRequest request) {
 		ManagerApiException finEx = (ManagerApiException) ex;
-		ApiError apiError = new ApiError(finEx.getStatus(), "There are data with errors", ex.getMessage());
+		ApiError apiError = new ApiError(finEx.getStatus(), "Is present error ", ex.getMessage());
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<Object> customHandleNotFound(final Exception ex, WebRequest request) {
+		NotFoundException finEx = (NotFoundException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "Item not Found", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
+	@ExceptionHandler(NotOpenRouletteException.class)
+	public ResponseEntity<Object> customHandleNotOpenRoulette(final Exception ex, WebRequest request) {
+		NotOpenRouletteException finEx = (NotOpenRouletteException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "Not exist some roulette with state (opening or created)", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
+	@ExceptionHandler(ColorNotAllowedException.class)
+	public ResponseEntity<Object> customHandleNotAllowedColor(final Exception ex, WebRequest request) {
+		ColorNotAllowedException finEx = (ColorNotAllowedException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "Color not allowed, only use Red and Black", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}	
+	@ExceptionHandler(NumberOutRangeException.class)
+	public ResponseEntity<Object> customHandleNumberOutRange(final Exception ex, WebRequest request) {
+		NumberOutRangeException finEx = (NumberOutRangeException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "The bet for number, is only permitted numbers between 0 and 36", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
+	@ExceptionHandler(AmountNotPermittedException.class)
+	public ResponseEntity<Object> customHandleAmountNotPertmittedRange(final Exception ex, WebRequest request) {
+		AmountNotPermittedException finEx = (AmountNotPermittedException) ex;
+		ApiError apiError = new ApiError(finEx.getStatus(), "Amount exceded the minimud permitted", ex.getMessage());
+		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+	}
+	
 }

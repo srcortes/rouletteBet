@@ -50,7 +50,7 @@ public class RouletteRepository implements RouletteDAO {
 	}
 	@Override
 	public void openingRoulette(Long idRoulette) throws ManagerApiException {
-		final String sqlOpeningRoulette = "UPDATE MANAGER.ROULETTE SET id_state = "+ConstantState.OPENING.getId()+" WHERE id_roulette=:idRoulette";
+		final String sqlOpeningRoulette = "UPDATE MANAGER.ROULETTE SET ID_STATE = "+ConstantState.OPENING.getId()+" WHERE ID_ROULETTE=:idRoulette";
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("idRoulette", idRoulette);
 		template.execute(sqlOpeningRoulette, map, new PreparedStatementCallback<Object>() {
@@ -79,11 +79,11 @@ public class RouletteRepository implements RouletteDAO {
 		CreateBetDTO createBet = createBetDTO;
 		SqlParameterSource param = new MapSqlParameterSource()
 				.addValue("ID_BET", createBet.getIdBet())
-				.addValue("ID_ROULETTE", 1)
+				.addValue("ID_ROULETTE", createBetDTO.getRoulette().getIdRoulette())
 				.addValue("ID_GAMBLER", createBet.getIdUser())
 				.addValue("BET", createBet.getBet())
 				.addValue("AMOUNT", createBet.getAmount());
 		template.update("INSERT INTO MANAGER.BET_USER (ID_BET, ID_ROULETTE, ID_GAMBLER, BET, AMOUNT) VALUES (:ID_BET, :ID_ROULETTE, :ID_GAMBLER, :BET, :AMOUNT)", param, holder);
 		return createBet;
-	}
+	}	
 }

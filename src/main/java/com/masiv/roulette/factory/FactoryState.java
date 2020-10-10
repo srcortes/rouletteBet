@@ -18,4 +18,7 @@ public class FactoryState {
 	public static StateDTO createThirdState() {
 		return new StateDTO(Integer.valueOf(ConstantState.CLOSED.getId()), ConstantState.CLOSED.getName());
 	}
+	public static StateDTO createFourthState(){
+		return new StateDTO(Integer.valueOf(ConstantState.IN_USE.getId()), ConstantState.IN_USE.getName());
+	}
 }

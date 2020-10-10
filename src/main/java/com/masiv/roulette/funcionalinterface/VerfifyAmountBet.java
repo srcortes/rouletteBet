@@ -6,5 +6,5 @@ package com.masiv.roulette.funcionalinterface;
  */
 @FunctionalInterface
 public interface VerfifyAmountBet {
-     boolean isPermittedAmount(Long valueAmount);
+     boolean isPermittedAmount(String valueAmount);
 }

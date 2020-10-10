@@ -7,7 +7,7 @@ import lombok.Data;
  *
  */
 @Data
-public class CreateBetDTO {
+public final class CreateBetDTO {
 	private long idBet;
 	private RouletteDTO roulette;
 	private Long idUser;

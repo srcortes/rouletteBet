@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.masiv.roulette.response.ManagerApiResponse;
 import com.masiv.roulette.service.RouletteService;
+import com.masiv.roulette.exceptions.ColorNotAllowedException;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.exceptions.NumberOutRangeException;
 import com.masiv.roulette.json.BetUserRest;
 import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
@@ -53,12 +55,12 @@ public class RouletteController {
 	}
 	@ApiOperation(notes = "Service is responsable for opening a roulette of agree a id", value = "Id Roulette")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = String.class),
-		@ApiResponse(code = 500, message = "Internal Server Error", response = ManagerApiException.class),
+		@ApiResponse(code = 500, message = "Internal Server Error", response = Exception.class),
 		@ApiResponse(code = 404, message = "Not Found", response = ManagerApiException.class)})
 	@PutMapping(value = "/openingRoulette/{idRoulette}")
 	public ManagerApiResponse<String> openingRoulette(
 			@ApiParam(value = "Id roulette created earlier", required = true) @PathVariable("idRoulette") Long idRoulette)
-			throws ManagerApiException{
+			throws Exception{
 
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
 				rouletteService.openingRoulette(idRoulette));
@@ -73,15 +75,15 @@ public class RouletteController {
 				rouletteService.listRoulette());		
 	}
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = String.class),
-		@ApiResponse(code = 500, message = "Internal Server Error", response = ManagerApiException.class),
-		@ApiResponse(code = 417, message = "Number out range", response =  ManagerApiException.class),
-		@ApiResponse(code = 409, message = "Color not allowed", response =  ManagerApiException.class),
-		@ApiResponse(code = 401, message = "Exceded limit bet", response =  ManagerApiException.class)})
+		@ApiResponse(code = 500, message = "Internal Server Error", response = Exception.class),
+		@ApiResponse(code = 417, message = "Number out range", response =  NumberOutRangeException.class),
+		@ApiResponse(code = 409, message = "Color not allowed", response =  ColorNotAllowedException.class),
+		@ApiResponse(code = 417, message = "Exceded limit bet", response =  Exception.class)})
 	@PutMapping(value = "/generateBet")
 	public ManagerApiResponse<BetUserRest> generateBet(
 			@ApiParam(value = "Basic Information, generate bet by user", required = true) @RequestBody @Valid CreateBetRest createBetRest,
 			@ApiParam(value = "Number Id user", required = true) @RequestHeader("idUser") @Validated Long idUser)
-			throws ManagerApiException {
+			throws Exception {
 
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
 				rouletteService.listBetUser(createBetRest, idUser));

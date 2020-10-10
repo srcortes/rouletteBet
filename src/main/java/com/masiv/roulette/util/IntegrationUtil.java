@@ -54,9 +54,9 @@ public class IntegrationUtil {
 
 		return isCorrectColor;
 	}
-	public boolean isPermittedAmount(Long amount) {
-		Double amountBet = Double.valueOf(amount);
-		System.out.print(amountBet+""+Double.valueOf(ConstantLimitAmount.LIMIT_AMOUNT.getAmount()));
+	public boolean isPermittedAmount(String amount) {
+		String amountValueInString = amount.replace(".", "");
+		Double amountBet = Double.valueOf(amountValueInString);		
 		boolean isNotPermitted = true;
 		if(amountBet > Double.valueOf(ConstantLimitAmount.LIMIT_AMOUNT.getAmount()))
 			isNotPermitted =  false;

@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import com.masiv.roulette.dto.StateDTO;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.json.BetUserRest;
+import com.masiv.roulette.json.CreateBetRest;
 import com.masiv.roulette.json.CreateRouletteRest;
 import com.masiv.roulette.json.ListRouletteRest;
 import com.masiv.roulette.response.ManagerApiResponse;
@@ -27,6 +29,9 @@ import com.masiv.roulette.service.RouletteService;
 public class RouletteControllerTest {
 	private final CreateRouletteRest  CREATE_ROULETTE_REST = new CreateRouletteRest();
 	private final ListRouletteRest ROULETTE_REST = new ListRouletteRest();
+	private final BetUserRest BET_USER_REST = new BetUserRest();
+	private final CreateBetRest CREATE_BET_REST = new CreateBetRest();
+	private final Long ID_USER = new Long(8021778001L);
 	private final String ID_STATE = "1";
 	private final Long ID_ROULETTE = Long.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
 	private final String DESCRIPTION_STATE = "Created";
@@ -43,12 +48,19 @@ public class RouletteControllerTest {
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);	
-		Integer idRoulette = Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
+		Integer id = Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
 		STATE_ROULETTE_DTO = new StateDTO(Integer.valueOf(ID_STATE),DESCRIPTION_STATE);		
 		CREATE_ROULETTE_REST.setIdState(STATE_ROULETTE_DTO);
-		CREATE_ROULETTE_REST.setIdRoulette(idRoulette);
-		ROULETTE_REST.setIdRoulette(idRoulette);
+		CREATE_ROULETTE_REST.setIdRoulette(id);
+		ROULETTE_REST.setIdRoulette(id);
 		LIST_ROULETTE_REST.add(ROULETTE_REST);
+		BET_USER_REST.setIdBet(id);
+		BET_USER_REST.setIdUser(6270561l);
+		BET_USER_REST.setBet("36");
+		BET_USER_REST.setAmount(7000d);
+		CREATE_BET_REST.setAmount("7000");
+		CREATE_BET_REST.setBet("36");
+		
 	}	
 	@Test
 	public void createRouletteTest() throws ManagerApiException {
@@ -66,13 +78,13 @@ public class RouletteControllerTest {
 		fail();
 	}	
 	@Test(expected = ManagerApiException.class)
-	public void openingRouletteErrorErrorTest() throws ManagerApiException {
+	public void openingRouletteErrorErrorTest() throws Exception {
 		Mockito.doThrow(ManagerApiException.class).when(rouletteService).openingRoulette(ID_ROULETTE);
 		rouletteController.openingRoulette(ID_ROULETTE);
 		fail();
 	}
 	@Test
-	public void openingRouletteTest() throws ManagerApiException {
+	public void openingRouletteTest() throws Exception {
 		Mockito.when(rouletteService.openingRoulette(ID_ROULETTE)).thenReturn(SUCCES);
 		ManagerApiResponse<String> response = rouletteController.openingRoulette(ID_ROULETTE);
 		assertEquals(SUCCES, response.getDataInformation());
@@ -93,5 +105,21 @@ public class RouletteControllerTest {
 		assertEquals(response.getStatus(), SUCCES_STATUS);
 		assertFalse(response.getDataInformation().isEmpty());
 		assertEquals(response.getDataInformation().size(), 1);
+	}
+	@Test
+	public void generateBetTest()throws Exception {
+		Mockito.when(rouletteService.listBetUser(CREATE_BET_REST, ID_USER)).thenReturn(BET_USER_REST);
+		ManagerApiResponse<BetUserRest> response = rouletteController.generateBet(CREATE_BET_REST, ID_USER);
+		assertEquals(response.getCode(), SUCCES_CODE);
+		assertEquals(response.getMessage(), SUCCES_MESSAGE);
+		assertEquals(response.getStatus(), SUCCES_STATUS);
+		assertEquals(response.getDataInformation(), BET_USER_REST);
+	}
+	@Test(expected = ManagerApiException.class)
+	public void generateBetErrorTest()throws Exception{
+		Mockito.doThrow(ManagerApiException.class).when(rouletteService).listBetUser(CREATE_BET_REST, ID_USER);
+		rouletteController.generateBet(CREATE_BET_REST, ID_USER);
+		fail();
+		
 	}
 }
