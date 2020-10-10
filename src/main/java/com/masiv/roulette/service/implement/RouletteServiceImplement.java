@@ -12,6 +12,7 @@ import com.masiv.roulette.constant.ConstantState;
 import com.masiv.roulette.dictionaryerrors.DictionaryErros;
 import com.masiv.roulette.dto.CreateBetDTO;
 import com.masiv.roulette.dto.RouletteDTO;
+import com.masiv.roulette.dto.StateBetDTO;
 import com.masiv.roulette.dto.StateDTO;
 import com.masiv.roulette.exceptions.AmountNotPermittedException;
 import com.masiv.roulette.exceptions.ColorNotAllowedException;
@@ -20,6 +21,7 @@ import com.masiv.roulette.exceptions.NotFoundException;
 import com.masiv.roulette.exceptions.NotOpenRouletteException;
 import com.masiv.roulette.exceptions.NumberOutRangeException;
 import com.masiv.roulette.factory.FactoryState;
+import com.masiv.roulette.factory.FactoryStateBet;
 import com.masiv.roulette.funcionalinterface.VerfifyAmountBet;
 import com.masiv.roulette.funcionalinterface.VerifyColors;
 import com.masiv.roulette.funcionalinterface.VerifyIsNumber;
@@ -52,6 +54,7 @@ public final class RouletteServiceImplement implements RouletteService{
         try {
         	 if(!create) {
         		 this.createStateRoulette(); 
+        		 this.createStateBet();
         		 create = Boolean.TRUE;
         	 }
         	 RouletteDTO roulette = new RouletteDTO();
@@ -81,7 +84,20 @@ public final class RouletteServiceImplement implements RouletteService{
         	throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
         			DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError(), ex);	
 		}		
-	}	
+	}
+
+	@Override
+	public void createStateBet() throws ManagerApiException {
+		try {
+			StateBetDTO stateBetDTO[] = { FactoryStateBet.createFirtState(), FactoryStateBet.createSecondState(), };
+			for (StateBetDTO s : stateBetDTO)
+				rouletteRepository.createStateBet(s);
+		} catch (Exception ex) {
+			log.error(DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError() + ex);
+			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+					DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError(), ex);
+		}
+	}
 	@Override
 	public String openingRoulette(Long idRoulette) throws Exception {		
 		String messages = "";
@@ -195,5 +211,5 @@ public final class RouletteServiceImplement implements RouletteService{
 				throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
 						DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());						
 		}
-	}
+	}	
 }

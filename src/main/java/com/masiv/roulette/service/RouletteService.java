@@ -19,6 +19,7 @@ public interface RouletteService {
 	String openingRoulette(Long idRoulette)throws Exception;
 	List<ListRouletteRest> listRoulette() throws ManagerApiException;
 	BetUserRest listBetUser(CreateBetRest createBetRest, Long idUsuario) throws Exception;
+	void createStateBet() throws ManagerApiException;
 	void createStateRoulette() throws ManagerApiException;	
 	default RouletteDTO selectionRouletteOpening()throws ManagerApiException{
 		

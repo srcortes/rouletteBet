@@ -8,7 +8,7 @@ import lombok.Data;
  * @author srcortes
  *
  */
-public class FactoryState {
+public final class FactoryState {
 	public static StateDTO createFirtState(){
 		return new StateDTO(Integer.valueOf(ConstantState.CREATED.getId()), ConstantState.CREATED.getName());
 	}
