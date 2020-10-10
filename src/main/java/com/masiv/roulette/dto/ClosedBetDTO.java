@@ -12,5 +12,7 @@ public final class ClosedBetDTO {
      private CreateBetDTO createBetDTO;
      private Long idUser;
      private double earnedValue;
+     private int numberGenerate;
+ 	 private String typeBet;
      private String dateEmission; 
 }

@@ -16,7 +16,11 @@ public final class ClosedBetRest {
 	@JsonProperty("Ganador")
 	private Long idUser;
 	@JsonProperty("Valor_Ganado")
-	private double earnedValue;
+	private double earnedValue;	
+	@JsonProperty("Numero_Generado_Sistema")
+	private int numberGenerate;
+	@JsonProperty("Tipo apuesta color o numero")
+	private String typeBet;
 	@JsonProperty("Fecha_Emision_Cierre")
 	private String dateEmission; 
 }

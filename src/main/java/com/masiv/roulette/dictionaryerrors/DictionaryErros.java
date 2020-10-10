@@ -11,7 +11,8 @@ public enum DictionaryErros {
 	ERROR_EXCEEDS_LIMIT_BET("La cantidad maxima para apostar son $10.000USD"),
 	ROULETTE_NOT_OPENING("No existen ruletas creadas o abiertas, para iniciar apuestas"),
 	NOT_ROULETTE_OPENING("El id de ruleta que ingreso no se encuentra en estado Abierta"),
-	NOT_EXISTS_BET_FOR_ROULETTE("No existen por el momento apuestas para la ruleta seleccionada");
+	NOT_EXISTS_BET_FOR_ROULETTE("No existen por el momento apuestas para la ruleta seleccionada"),
+	ROULETTE_ISCLOSED("La ruleta que intenta abrir ya se encuentra cerrada");
 	private String descriptionErrors;
 	private DictionaryErros(String descriptionErrors) {
 		this.descriptionErrors = descriptionErrors;

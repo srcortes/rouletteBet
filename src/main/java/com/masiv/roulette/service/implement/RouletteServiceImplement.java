@@ -1,4 +1,5 @@
 package com.masiv.roulette.service.implement;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,9 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import com.masiv.roulette.constant.ConstantColor;
 import com.masiv.roulette.constant.ConstantOpeningRoulette;
 import com.masiv.roulette.constant.ConstantState;
 import com.masiv.roulette.dictionaryerrors.DictionaryErros;
+import com.masiv.roulette.dto.ClosedBetDTO;
 import com.masiv.roulette.dto.CreateBetDTO;
 import com.masiv.roulette.dto.RouletteDTO;
 import com.masiv.roulette.dto.StateBetDTO;
@@ -91,7 +95,7 @@ public final class RouletteServiceImplement implements RouletteService{
 	@Override
 	public void createStateBet() throws ManagerApiException {
 		try {
-			StateBetDTO stateBetDTO[] = { FactoryStateBet.createFirtState(), FactoryStateBet.createSecondState(), };
+			StateBetDTO stateBetDTO[] = { FactoryStateBet.createFirtState(), FactoryStateBet.createSecondState()};
 			for (StateBetDTO s : stateBetDTO)
 				rouletteRepository.createStateBet(s);
 		} catch (Exception ex) {
@@ -101,22 +105,32 @@ public final class RouletteServiceImplement implements RouletteService{
 		}
 	}
 	@Override
-	public String openingRoulette(Long idRoulette) throws Exception {		
+	public String changeStateRoulette(Long idRoulette) throws Exception {		
 		String messages = "";
 		try {
 			VerifyObjectExists isFound = new IntegrationUtil()::existObject;
+			VerifyObjectExists isClosed = new IntegrationUtil()::existObject;
 			boolean existsCustomer = isFound.existsRow(rouletteRepository.listRoulette(),
 					i -> i.getIdRoulette() == idRoulette);
 			if (!existsCustomer) {				
 				messages = ConstantOpeningRoulette.DENIED.getMessage();
 				throw new NotFoundException(HttpStatus.NOT_FOUND,null);
 			}
-			rouletteRepository.openingRoulette(idRoulette);
+			boolean roulettedIsClosed = isClosed.existsRow(rouletteRepository.listRoulette(),
+					i -> i.getIdRoulette() == idRoulette
+							&& i.getIdState().getDescription().equalsIgnoreCase(ConstantState.CLOSED.getName()));
+			if(roulettedIsClosed)
+				throw new NotOpenRouletteException(HttpStatus.NOT_FOUND,null);
+				
+			rouletteRepository.changeStateRoulette(idRoulette, Integer.valueOf(ConstantState.OPENING.getId()));
 			messages = ConstantOpeningRoulette.SUCCES.getMessage();
 		}catch (NotFoundException ex) {           
         	   log.error(DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());
         	   throw new NotFoundException(HttpStatus.NOT_FOUND,DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());         
-        }catch(ManagerApiException e) {
+        }catch(NotOpenRouletteException e) {
+        	throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+        			   DictionaryErros.ROULETTE_ISCLOSED.getDescriptionError());
+         }catch(ManagerApiException e) {
         	throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
        			   DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());
         }	
@@ -182,6 +196,7 @@ public final class RouletteServiceImplement implements RouletteService{
 		try {
 			VerifyObjectExists isFound = new IntegrationUtil()::existObject;
 			VerifyObjectExists isOpeningRoulette = new IntegrationUtil()::existObject;
+			int numberRandom = IntegrationUtil.generateNumberRandom();
 			boolean existsRoulette = isFound.existsRow(rouletteRepository.listRoulette(),
 					i -> i.getIdRoulette() == idRoulette);
 			if (!existsRoulette) 			
@@ -192,7 +207,10 @@ public final class RouletteServiceImplement implements RouletteService{
 				throw new NotOpenRouletteException(HttpStatus.EXPECTATION_FAILED, null);
 			if(rouletteRepository.existsBetByRoulette(idRoulette).size() == 0)
 				throw new NotExistBetException(HttpStatus.EXPECTATION_FAILED, null);
-		
+			rouletteRepository.changeStateRoulette(idRoulette, Integer.valueOf(ConstantState.CLOSED.getId()));
+			rouletteRepository.closedBet(idRoulette);
+			List<ClosedBetDTO> listWinner = rouletteRepository.selectPersonWinner(idRoulette,numberRandom);
+			this.getPersonWinner(listWinner);
 			
 			return null;
 		} catch (NotFoundException ex) {
@@ -216,7 +234,7 @@ public final class RouletteServiceImplement implements RouletteService{
 		createBetDTO.setIdBet(IntegrationUtil.generateKey());
 		createBetDTO.setIdUser(idUser);
 		createBetDTO.setRoulette(this.selectionRouletteOpening());
-		createBetDTO.setBet(createBetRest.getBet());
+		createBetDTO.setBet(createBetRest.getBet().toLowerCase());
 		createBetDTO.setAmount(Double.valueOf(createBetRest.getAmount()));
 		
 		return modelMapper.map(rouletteRepository.generateBet(createBetDTO), BetUserRest.class);
@@ -242,9 +260,41 @@ public final class RouletteServiceImplement implements RouletteService{
 			
 			return rouletteDTO;			
 		}catch(Exception ex) {			
-				log.error(""+ ex);
-				throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+			log.error(""+ ex);
+			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
 						DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());						
 		}
-	}	
+	}
+	public List<ClosedBetRest> getPersonWinner(List<ClosedBetDTO> listWinnerBet) throws ManagerApiException {
+		try {
+			Iterator<ClosedBetDTO> iterator = listWinnerBet.iterator();
+			List<ClosedBetDTO> newListMapRest = new ArrayList<>();
+			while (iterator.hasNext()) {
+				ClosedBetDTO closedBetOld = (ClosedBetDTO) iterator.next();
+				ClosedBetDTO closedBetNew = new ClosedBetDTO();		
+				closedBetNew.setIdResult(IntegrationUtil.generateKey());
+				if (closedBetOld.getCreateBetDTO().getBet().equalsIgnoreCase(ConstantColor.NEGRO.getColors())
+						|| closedBetOld.getCreateBetDTO().getBet().equalsIgnoreCase(ConstantColor.ROJO.getColors())) 
+					closedBetNew.setEarnedValue(closedBetOld.getCreateBetDTO().getAmount() * 1.8);               
+				else
+					closedBetNew.setEarnedValue(closedBetOld.getCreateBetDTO().getAmount() * 5);
+				closedBetNew.setCreateBetDTO(closedBetOld.getCreateBetDTO());
+				closedBetNew.setIdUser(closedBetOld.getCreateBetDTO().getIdUser());
+				closedBetNew.setNumberGenerate(closedBetOld.getNumberGenerate());
+				closedBetNew.setTypeBet(closedBetOld.getCreateBetDTO().getBet());
+				closedBetNew.setDateEmission(IntegrationUtil.getDateToday());
+				newListMapRest.add(closedBetNew);
+				rouletteRepository.createFinalScore(closedBetNew);
+			}
+
+		} catch (ManagerApiException ex) {
+			log.error(DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError() + ex);
+			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
+					DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());
+		}
+		
+		
+		
+		return null;
+	}
 }

@@ -3,7 +3,7 @@ package com.masiv.roulette.constant;
  * srcortes
  */
 public enum ConstantColor {
-	ROJO("rojo"),NEGRO("Negro");
+	ROJO("rojo"),NEGRO("negro");
 	private String colors;
 	private ConstantColor(String colors) {
 		this.colors = colors;
@@ -15,5 +15,8 @@ public enum ConstantColor {
 				return "isCorrect";
 		}
 		return "isNotCorrect";				
+	}
+	public String getColors() {
+		return colors;
 	}
 }

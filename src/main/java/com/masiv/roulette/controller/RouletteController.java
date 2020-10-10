@@ -64,7 +64,7 @@ public class RouletteController {
 			throws Exception{
 
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
-				rouletteService.openingRoulette(idRoulette));
+				rouletteService.changeStateRoulette(idRoulette));
 	}
 	@ApiOperation(notes = "Service is responsable of make a list of roulette with state", value = "N/A")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = CreateRouletteRest.class),

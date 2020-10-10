@@ -12,14 +12,18 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import com.masiv.roulette.constant.ConstantColor;
 import com.masiv.roulette.constant.ConstantState;
 import com.masiv.roulette.constant.ConstantStateBet;
 import com.masiv.roulette.dao.RouletteDAO;
+import com.masiv.roulette.dto.ClosedBetDTO;
 import com.masiv.roulette.dto.CreateBetDTO;
 import com.masiv.roulette.dto.RouletteDTO;
 import com.masiv.roulette.dto.StateBetDTO;
 import com.masiv.roulette.dto.StateDTO;
 import com.masiv.roulette.exceptions.ManagerApiException;
+import com.masiv.roulette.util.IntegrationUtil;
 /**
 * this interface represent the comunication with database
 * @author srcortes
@@ -50,8 +54,8 @@ public class RouletteRepository implements RouletteDAO {
 		template.update("INSERT INTO  MANAGER.STATE (ID_STATE, DESCRIPTION) VALUES (:ID_STATE, :DESCRIPTION)", param, holder);		
 	}
 	@Override
-	public void openingRoulette(Long idRoulette) throws ManagerApiException {
-		final String sqlOpeningRoulette = "UPDATE MANAGER.ROULETTE SET ID_STATE = "+ConstantState.OPENING.getId()+" WHERE ID_ROULETTE=:idRoulette";
+	public void changeStateRoulette(Long idRoulette, Integer idState) throws ManagerApiException {
+		final String sqlOpeningRoulette = "UPDATE MANAGER.ROULETTE SET ID_STATE = "+idState+" WHERE ID_ROULETTE=:idRoulette";
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("idRoulette", idRoulette);
 		template.execute(sqlOpeningRoulette, map, new PreparedStatementCallback<Object>() {
@@ -105,5 +109,51 @@ public class RouletteRepository implements RouletteDAO {
 			createBetDTO.setIdBet(rs.getLong("ID_BET"));
 			return createBetDTO;
 		});	
-	}	
+	}
+	@Override
+	public void closedBet(Long idRoulette) throws ManagerApiException {
+		final String sqlOpeningRoulette = "UPDATE MANAGER.BET_USER SET ID_STATEBET = "+ConstantStateBet.CLOSED.getId()+" WHERE ID_ROULETTE=:idRoulette";
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("idRoulette", idRoulette);
+		template.execute(sqlOpeningRoulette, map, new PreparedStatementCallback<Object>() {
+			@Override
+			public Object doInPreparedStatement(java.sql.PreparedStatement ps)
+					throws java.sql.SQLException, DataAccessException {
+				return ps.executeUpdate();
+			}			
+		});	
+		
+	}
+	@Override
+	public List<ClosedBetDTO> selectPersonWinner(Long idRoulette, int filterNumberGenerate) throws ManagerApiException {		
+		String winnerByColor = filterNumberGenerate % 2 == 0 ? ConstantColor.ROJO.getColors(): ConstantColor.NEGRO.getColors();
+		final String sqlExistsBets = "SELECT ID_BET, ID_GAMBLES, AMOUNT, BET FROM MANAGER.BET_USER WHERE ID_ROULETTE = " + idRoulette +" AND (BET ="+filterNumberGenerate+" OR BET = " +"'"+winnerByColor+"'"+ ")";
+		return template.query(sqlExistsBets, (rs, rowNumber) -> {
+			CreateBetDTO createBetDTO = new CreateBetDTO();
+			ClosedBetDTO closedBetDTO = new ClosedBetDTO();
+			createBetDTO.setIdBet(rs.getLong("ID_BET"));
+			createBetDTO.setIdUser(rs.getLong("ID_GAMBLES"));			
+			createBetDTO.setAmount(rs.getDouble("AMOUNT"));
+			createBetDTO.setBet(rs.getString("BET"));			
+			closedBetDTO.setCreateBetDTO(createBetDTO);
+			closedBetDTO.setNumberGenerate(filterNumberGenerate);
+			return closedBetDTO;
+			
+		});		
+	}
+
+	@Override
+	public void createFinalScore(ClosedBetDTO closedBetDTO) throws ManagerApiException {
+		KeyHolder holder = new GeneratedKeyHolder();
+		SqlParameterSource param = new MapSqlParameterSource().addValue("ID_RESULT", closedBetDTO.getIdResult())
+				.addValue("ID_BET", closedBetDTO.getCreateBetDTO())
+				.addValue("ID_GAMBLES", closedBetDTO.getCreateBetDTO().getIdUser())
+				.addValue("BET", closedBetDTO.getCreateBetDTO().getBet())
+				.addValue("NUMBER_GENERATE", closedBetDTO.getNumberGenerate())
+				.addValue("EARNED_VALUE", closedBetDTO.getEarnedValue())
+				.addValue("DATE_EMISSION", closedBetDTO.getDateEmission());
+		template.update("INSERT INTO MANAGER.EMISSION_RESULT (ID_RESULT, ID_BET, ID_GAMBLES, BET, NUMBER_GENERATE, EARNED_VALUE, DATE_EMISSION) VALUES (:ID_RESULT, :ID_BET, :ID_GAMBLES, :BET, :NUMBER_GENERATE, :EARNED_VALUE, :DATE_EMISSION)",
+				param, holder);
+
+	}
 }

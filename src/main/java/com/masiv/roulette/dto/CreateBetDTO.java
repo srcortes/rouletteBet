@@ -12,5 +12,5 @@ public final class CreateBetDTO {
 	private RouletteDTO roulette;
 	private Long idUser;
 	private String bet;
-	private double amount;
+	private double amount;	
 }

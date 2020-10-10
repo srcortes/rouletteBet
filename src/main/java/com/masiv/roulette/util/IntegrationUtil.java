@@ -2,8 +2,10 @@ package com.masiv.roulette.util;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import com.masiv.roulette.constant.ConstantColor;
@@ -19,8 +21,7 @@ public class IntegrationUtil {
 		
 		return Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
 	}
-	public <T> boolean existObject(List<T> list, Predicate<T> predicate) {
-		System.out.print(list);
+	public <T> boolean existObject(List<T> list, Predicate<T> predicate) {		
 		list.forEach(i -> {
 			if (predicate.test(i))
 				existObject = true;
@@ -63,5 +64,13 @@ public class IntegrationUtil {
 			isNotPermitted =  false;
 		
 		return isNotPermitted;
+	}
+	public static Integer generateNumberRandom() {
+		Random rand = new Random();
+		return rand.nextInt(36);
+	}
+	public static String getDateToday() {
+		LocalDateTime now = LocalDateTime.now();
+		return now.toString();
 	}
 }
