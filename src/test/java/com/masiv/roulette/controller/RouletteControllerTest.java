@@ -79,13 +79,13 @@ public class RouletteControllerTest {
 	}	
 	@Test(expected = ManagerApiException.class)
 	public void openingRouletteErrorErrorTest() throws Exception {
-		Mockito.doThrow(ManagerApiException.class).when(rouletteService).openingRoulette(ID_ROULETTE);
+		Mockito.doThrow(ManagerApiException.class).when(rouletteService).changeStateRoulette(ID_ROULETTE);
 		rouletteController.openingRoulette(ID_ROULETTE);
 		fail();
 	}
 	@Test
 	public void openingRouletteTest() throws Exception {
-		Mockito.when(rouletteService.openingRoulette(ID_ROULETTE)).thenReturn(SUCCES);
+		Mockito.when(rouletteService.changeStateRoulette(ID_ROULETTE)).thenReturn(SUCCES);
 		ManagerApiResponse<String> response = rouletteController.openingRoulette(ID_ROULETTE);
 		assertEquals(SUCCES, response.getDataInformation());
 		assertNotNull(response.getDataInformation());
