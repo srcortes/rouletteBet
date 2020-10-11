@@ -192,7 +192,7 @@ public final class RouletteServiceImplement implements RouletteService{
 		}
 	}
 	@Override
-	public ClosedBetRest closedBet(Long idRoulette) throws Exception {
+	public List<ClosedBetRest> closedBet(Long idRoulette) throws Exception {
 		try {
 			VerifyObjectExists isFound = new IntegrationUtil()::existObject;
 			VerifyObjectExists isOpeningRoulette = new IntegrationUtil()::existObject;
@@ -209,10 +209,9 @@ public final class RouletteServiceImplement implements RouletteService{
 				throw new NotExistBetException(HttpStatus.EXPECTATION_FAILED, null);
 			rouletteRepository.changeStateRoulette(idRoulette, Integer.valueOf(ConstantState.CLOSED.getId()));
 			rouletteRepository.closedBet(idRoulette);
-			List<ClosedBetDTO> listWinner = rouletteRepository.selectPersonWinner(idRoulette,numberRandom);
-			this.getPersonWinner(listWinner);
+			List<ClosedBetDTO> listWinner = rouletteRepository.selectPersonWinner(idRoulette,numberRandom);			
 			
-			return null;
+			return this.getPersonWinner(listWinner);
 		} catch (NotFoundException ex) {
 			log.error(DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());
 			throw new NotFoundException(HttpStatus.NOT_FOUND, DictionaryErros.ERROR_NOT_FOUND.getDescriptionError());
@@ -286,15 +285,12 @@ public final class RouletteServiceImplement implements RouletteService{
 				newListMapRest.add(closedBetNew);
 				rouletteRepository.createFinalScore(closedBetNew);
 			}
+			return newListMapRest.stream().map(j-> modelMapper.map(j, ClosedBetRest.class)).collect(Collectors.toList());		
 
 		} catch (ManagerApiException ex) {
 			log.error(DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError() + ex);
 			throw new ManagerApiException(HttpStatus.INTERNAL_SERVER_ERROR,
 					DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError());
-		}
-		
-		
-		
-		return null;
+		}	
 	}
 }

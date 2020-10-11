@@ -127,10 +127,13 @@ public class RouletteRepository implements RouletteDAO {
 	@Override
 	public List<ClosedBetDTO> selectPersonWinner(Long idRoulette, int filterNumberGenerate) throws ManagerApiException {		
 		String winnerByColor = filterNumberGenerate % 2 == 0 ? ConstantColor.ROJO.getColors(): ConstantColor.NEGRO.getColors();
-		final String sqlExistsBets = "SELECT ID_BET, ID_GAMBLES, AMOUNT, BET FROM MANAGER.BET_USER WHERE ID_ROULETTE = " + idRoulette +" AND (BET ="+filterNumberGenerate+" OR BET = " +"'"+winnerByColor+"'"+ ")";
+		final String sqlExistsBets = "SELECT ID_BET, ID_GAMBLES, AMOUNT, BET, ID_ROULETTE FROM MANAGER.BET_USER WHERE ID_ROULETTE = " + idRoulette +" AND (BET ="+filterNumberGenerate+" OR BET = " +"'"+winnerByColor+"'"+ ")";
 		return template.query(sqlExistsBets, (rs, rowNumber) -> {
 			CreateBetDTO createBetDTO = new CreateBetDTO();
 			ClosedBetDTO closedBetDTO = new ClosedBetDTO();
+			RouletteDTO rouletteDTO = new RouletteDTO();
+			rouletteDTO.setIdRoulette(rs.getLong("ID_ROULETTE"));
+			createBetDTO.setRoulette(rouletteDTO);
 			createBetDTO.setIdBet(rs.getLong("ID_BET"));
 			createBetDTO.setIdUser(rs.getLong("ID_GAMBLES"));			
 			createBetDTO.setAmount(rs.getDouble("AMOUNT"));
@@ -145,8 +148,9 @@ public class RouletteRepository implements RouletteDAO {
 	@Override
 	public void createFinalScore(ClosedBetDTO closedBetDTO) throws ManagerApiException {
 		KeyHolder holder = new GeneratedKeyHolder();
-		SqlParameterSource param = new MapSqlParameterSource().addValue("ID_RESULT", closedBetDTO.getIdResult())
-				.addValue("ID_BET", closedBetDTO.getCreateBetDTO())
+		SqlParameterSource param = new MapSqlParameterSource()
+				.addValue("ID_RESULT", IntegrationUtil.generateKey() * IntegrationUtil.generateNumberRandom())
+				.addValue("ID_BET", closedBetDTO.getCreateBetDTO().getIdBet())
 				.addValue("ID_GAMBLES", closedBetDTO.getCreateBetDTO().getIdUser())
 				.addValue("BET", closedBetDTO.getCreateBetDTO().getBet())
 				.addValue("NUMBER_GENERATE", closedBetDTO.getNumberGenerate())

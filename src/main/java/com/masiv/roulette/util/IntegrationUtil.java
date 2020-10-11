@@ -17,8 +17,7 @@ import com.masiv.roulette.constant.ConstantLimitAmount;
  */
 public class IntegrationUtil {
 	private Boolean existObject = false;
-	public static Integer generateKey() {
-		
+	public static Integer generateKey() {		
 		return Integer.valueOf(String.valueOf(System.currentTimeMillis()).substring(4));
 	}
 	public <T> boolean existObject(List<T> list, Predicate<T> predicate) {		

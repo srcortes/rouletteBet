@@ -1,5 +1,7 @@
 package com.masiv.roulette.dto;
 
+import java.io.Serializable;
+
 import lombok.Data;
 /**
  * 
@@ -7,7 +9,7 @@ import lombok.Data;
  *
  */
 @Data
-public final class CreateBetDTO {
+public final class CreateBetDTO implements Serializable{
 	private long idBet;
 	private RouletteDTO roulette;
 	private Long idUser;

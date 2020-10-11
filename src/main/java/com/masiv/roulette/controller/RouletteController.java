@@ -97,7 +97,7 @@ public class RouletteController {
 			@ApiResponse(code = 409, message = "Color not allowed", response = ColorNotAllowedException.class),
 			@ApiResponse(code = 417, message = "Exceded limit bet", response = Exception.class) })
 	@PutMapping(value = "/closedBet/{idRoulette}")
-	public ManagerApiResponse<ClosedBetRest> closedBet(@PathVariable("idRoulette") Long idRoulette) throws Exception {
+	public ManagerApiResponse<List<ClosedBetRest>> closedBet(@PathVariable("idRoulette") Long idRoulette) throws Exception {
 		
 		return new ManagerApiResponse<>("Succes", String.valueOf(HttpStatus.OK), "OK",
 				rouletteService.closedBet(idRoulette));
