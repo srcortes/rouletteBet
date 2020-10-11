@@ -93,9 +93,9 @@ public class RouletteController {
 	@ApiOperation(notes = "Service is responsable oof close bet for id roulette", value = "Id roulette in state opening")
 	@ApiResponses({ @ApiResponse(code = 200, message = "Ok", response = String.class),
 			@ApiResponse(code = 500, message = "Internal Server Error", response = Exception.class),
-			@ApiResponse(code = 417, message = "Number out range", response = NumberOutRangeException.class),
+			@ApiResponse(code = 400, message = "Roulette not found", response = NumberOutRangeException.class),
 			@ApiResponse(code = 409, message = "Color not allowed", response = ColorNotAllowedException.class),
-			@ApiResponse(code = 417, message = "Exceded limit bet", response = Exception.class) })
+			@ApiResponse(code = 417, message = "Roulette not open", response = Exception.class) })
 	@PutMapping(value = "/closedBet/{idRoulette}")
 	public ManagerApiResponse<List<ClosedBetRest>> closedBet(@PathVariable("idRoulette") Long idRoulette) throws Exception {
 		
