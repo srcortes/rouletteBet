@@ -91,7 +91,6 @@ public final class RouletteServiceImplement implements RouletteService{
         			DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError(), ex);	
 		}		
 	}
-
 	@Override
 	public void createStateBet() throws ManagerApiException {
 		try {
