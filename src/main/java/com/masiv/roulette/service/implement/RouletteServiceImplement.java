@@ -66,8 +66,8 @@ public final class RouletteServiceImplement implements RouletteService{
         	 RouletteDTO roulette = new RouletteDTO();
         	 roulette.setIdRoulette(IntegrationUtil.generateKey());
         	 roulette.setIdState(FactoryState.createFirtState());
-        	 
-        	 return modelMapper.map(rouletteRepository.createRoulette(roulette), CreateRouletteRest.class);        	
+        	 rouletteRepository.createRoulette(roulette);
+        	 return modelMapper.map(roulette, CreateRouletteRest.class);        	
         }catch (Exception ex) {
         	ex.printStackTrace();
         	log.error(DictionaryErros.ERROR_INTERNAL_SERVER.getDescriptionError() + ex.getCause());

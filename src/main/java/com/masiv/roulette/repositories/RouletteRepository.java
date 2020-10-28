@@ -36,14 +36,12 @@ public class RouletteRepository implements RouletteDAO {
 		this.template = template;
 	}
 	@Override
-	public RouletteDTO createRoulette(RouletteDTO roulette) throws ManagerApiException {
-		KeyHolder holder = new GeneratedKeyHolder();		
-		RouletteDTO rouletteDTO = roulette;		
+	public void createRoulette(RouletteDTO roulette) throws ManagerApiException {
+		KeyHolder holder = new GeneratedKeyHolder();
 		SqlParameterSource param = new MapSqlParameterSource()
-				.addValue("ID_ROULETTE",rouletteDTO.getIdRoulette())
-				.addValue("ID_STATE", rouletteDTO.getIdState().getIdState());
-		template.update("INSERT INTO MANAGER.ROULETTE (ID_ROULETTE, ID_STATE) VALUES (:ID_ROULETTE, :ID_STATE)", param, holder);
-		return rouletteDTO;
+				.addValue("ID_ROULETTE",roulette.getIdRoulette())
+				.addValue("ID_STATE", roulette.getIdState().getIdState());
+		template.update("INSERT INTO MANAGER.ROULETTE (ID_ROULETTE, ID_STATE) VALUES (:ID_ROULETTE, :ID_STATE)", param, holder);		
 	}
 	@Override
 	public void createStateRoulette(StateDTO state) throws ManagerApiException {
@@ -144,7 +142,6 @@ public class RouletteRepository implements RouletteDAO {
 			
 		});		
 	}
-
 	@Override
 	public void createFinalScore(ClosedBetDTO closedBetDTO) throws ManagerApiException {
 		KeyHolder holder = new GeneratedKeyHolder();

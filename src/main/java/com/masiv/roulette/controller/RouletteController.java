@@ -41,7 +41,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping(produces = "application/json")
 @Validated
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class RouletteController {
 	@Autowired
 	RouletteService rouletteService;	

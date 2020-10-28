@@ -15,7 +15,7 @@ import com.masiv.roulette.json.BetUserRest;
  *
  */
 public interface RouletteDAO {
-	RouletteDTO createRoulette(RouletteDTO roulette) throws ManagerApiException;
+	void createRoulette(RouletteDTO roulette) throws ManagerApiException;
 	void createStateRoulette(StateDTO state) throws ManagerApiException;
 	void createStateBet(StateBetDTO stateBetDTO) throws ManagerApiException;
 	void changeStateRoulette(Long idRoulette, Integer idState)throws ManagerApiException;
