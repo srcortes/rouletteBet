@@ -41,7 +41,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping(produces = "application/json")
 @Validated
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://play-roulette.herokuapp.com/ManagerApi")
 public class RouletteController {
 	@Autowired
 	RouletteService rouletteService;	
